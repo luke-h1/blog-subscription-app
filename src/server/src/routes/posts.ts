@@ -184,6 +184,7 @@ router.get(
         const standardPosts = await prisma.post.findFirst({
           where: {
             access: 'STANDARD',
+            OR: [{ access: 'BASIC' }],
             id,
           },
         });
@@ -192,7 +193,6 @@ router.get(
       case 'Premium':
         const premiumPosts = await prisma.post.findFirst({
           where: {
-            access: 'PREMIUM',
             id,
           },
         });
