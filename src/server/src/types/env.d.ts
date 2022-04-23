@@ -6,6 +6,7 @@ declare global {
       STRIPE_PK: string;
       STRIPE_SK: string;
       CLIENT_URL: string;
+      PORT: string;
     }
   }
 }

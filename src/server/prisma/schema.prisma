@@ -1,0 +1,31 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+    id            String    @id @default(cuid())
+    email String @unique
+    password String
+    stripeCustomerId String @map("stripe_customer_id") @unique
+}
+
+model Post {
+    id            String    @id @default(cuid())
+    title String
+    content String 
+    imageUrl String
+    access Access
+}
+
+enum Access {
+  BASIC
+  STANDARD
+  PREMIUM
+}
