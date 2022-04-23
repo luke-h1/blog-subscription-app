@@ -12,7 +12,9 @@
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "tsc": "tsc --noEmit",
-    "gen-env": "gen-env-types .env -o src/types/env.d.ts -e ."
+    "gen-env": "gen-env-types .env -o src/types/env.d.ts -e .",
+    "prisma:push": "prisma db push",
+    "prisma:migrate": "prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^3.12.0",

@@ -31,7 +31,11 @@ router.post(
 
     const { email, password } = req.body;
 
-    const user = await prisma.user.findFirst({ where: email });
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
 
     if (user) {
       return res.status(409).json({
