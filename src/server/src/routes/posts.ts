@@ -96,6 +96,7 @@ router.get('/', checkAuth, async (req, res) => {
   const plan = subscriptions.data[0].plan.nickname;
 
   switch (plan) {
+    // basic users have access to only 'BASIC' posts
     case 'Basic':
       const basicPosts = await prisma.post.findMany({
         where: {
@@ -104,20 +105,19 @@ router.get('/', checkAuth, async (req, res) => {
       });
       return res.status(200).json({ data: basicPosts, errors: null });
 
+    // standard users have access to 'STANDARD' & 'BASIC' posts
     case 'Standard':
       const standardPosts = await prisma.post.findMany({
         where: {
           access: 'STANDARD',
+          OR: [{ access: 'BASIC' }],
         },
       });
       return res.status(200).json({ data: standardPosts, errors: null });
 
+    // premium users have access to everything
     case 'Premium':
-      const premiumPosts = await prisma.post.findMany({
-        where: {
-          access: 'PREMIUM',
-        },
-      });
+      const premiumPosts = await prisma.post.findMany({});
       return res.status(200).json({ data: premiumPosts, errors: null });
 
     default:
