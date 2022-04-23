@@ -5,9 +5,12 @@ import { InputField } from '../components/InputField';
 import { Wrapper } from '../components/Wrapper';
 import authService from '../services/authService';
 import axios from 'axios';
+import { useAuthContext } from '../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setState } = useAuthContext();
+
   return (
     <Wrapper variant="small">
       <Formik
@@ -25,6 +28,17 @@ const Login = () => {
             axios.defaults.headers.common[
               'Authorization'
             ] = `Bearer ${res.data.token}`;
+
+            setState({
+              user: {
+                loading: false,
+                email: res.data.user.email,
+                id: res.data.user.id,
+                stripeCustomerId: res.data.user.stripeCustomerId,
+              },
+              ready: true,
+            });
+
             navigate('/posts');
           }
         }}

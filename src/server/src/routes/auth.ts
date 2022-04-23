@@ -70,7 +70,7 @@ router.post(
     );
 
     return res.status(201).json({
-      errors: null,
+      errors: [],
       data: {
         token,
         user: {
@@ -113,7 +113,7 @@ router.post('/login', async (req, res) => {
   );
 
   return res.status(200).json({
-    errors: null,
+    errors: [],
     data: {
       token,
       user: {
@@ -129,7 +129,7 @@ router.get('/me', checkAuth, async (req, res) => {
   const user = await prisma.user.findFirst({ where: { email: req.user } });
 
   return res.status(200).json({
-    errors: null,
+    errors: [],
     data: {
       user: {
         id: user?.id,

@@ -1,10 +1,10 @@
 import { Spinner } from '@chakra-ui/react';
 import { Suspense, useContext } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
+import { useAuthContext } from '../context/AuthContext';
 
 const ProtectedRoute = () => {
-  const { loading, data } = useContext(UserContext);
+  const { loading, user } = useAuthContext();
   if (loading)
     return (
       <Suspense>
@@ -12,11 +12,11 @@ const ProtectedRoute = () => {
       </Suspense>
     );
 
-  if (!data && !loading) {
+  if (!user && !loading) {
     return <Navigate to="/" />;
   }
 
-  if (!loading && data) {
+  if (!loading && user) {
     return <Outlet />;
   }
   return null;
