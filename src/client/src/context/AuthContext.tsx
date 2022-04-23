@@ -47,7 +47,6 @@ export const AuthContextProvider = ({ children }: Props) => {
 
   const fetchUser = async () => {
     const data = await authService.me();
-    console.log('data inside AuthContext', data);
     if (data && data.user) {
       setState({
         user: {

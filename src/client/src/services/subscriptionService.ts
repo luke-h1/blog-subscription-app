@@ -15,7 +15,6 @@ const subscriptionService = {
     const { data } = await axios.get(
       `${process.env.REACT_APP_API_URL}/api/subscriptions/prices`,
     );
-    console.log(data);
     return data.data;
   },
 };

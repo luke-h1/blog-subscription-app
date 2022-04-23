@@ -61,10 +61,7 @@ const PostPlanPage = () => {
   };
 
   useEffect(() => {
-    // @ts-ignore
-    const data = fetchPrices();
-    console.log('data in post plan page', data);
-    // @ts-ignore
+    fetchPrices();
   }, []);
 
   return (
