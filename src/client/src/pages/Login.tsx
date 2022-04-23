@@ -3,6 +3,8 @@ import { Form, Formik } from 'formik';
 import { Link } from 'react-router-dom';
 import { InputField } from '../components/InputField';
 import { Wrapper } from '../components/Wrapper';
+import authService from '../services/authService';
+import axios from 'axios';
 
 const Login = () => {
   return (
@@ -10,17 +12,19 @@ const Login = () => {
       <Formik
         initialValues={{ email: '', password: '' }}
         onSubmit={async (values, { setErrors }) => {
-          // login
-          // if (response.data?.login.errors) {
-          //   setErrors(toErrorMap(response.data.login.errors));
-          // } else if (response.data?.login.user) {
-          //   if (typeof router.query.next === "string") {
-          //     router.push(router.query.next);
-          //   } else {
-          //     // worked
-          //     router.push("/");
-          //   }
-          // }
+          const { email, password } = values;
+          const res = await authService.login(email, password);
+
+          if (res?.errors && res.errors.length) {
+            setErrors({
+              email: res.errors[0].message,
+            });
+          } else {
+            localStorage.setItem('token', res.data.token);
+            axios.defaults.headers.common[
+              'Authorization'
+            ] = `Bearer ${res.data.token}`;
+          }
         }}
       >
         {({ isSubmitting }) => (
