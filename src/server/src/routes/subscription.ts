@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/prices', checkAuth, async (_req, res) => {
   const prices = await stripe.prices.list({
-    apiKey: process.env.STRIPE_PK,
+    apiKey: process.env.STRIPE_SK,
   });
 
   res.status(200).json({ data: prices, errors: null });
