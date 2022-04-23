@@ -27,7 +27,8 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "strictPropertyInitialization": false,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "typeRoots": ["@types", "./node_modules/@types"]
   },
   "exclude": [
     "node_modules"

@@ -1,10 +1,9 @@
 import { User } from '@prisma/client';
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { IRequest } from '../types/IRequest';
 
 export const checkAuth = async (
-  req: IRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
@@ -22,7 +21,7 @@ export const checkAuth = async (
   try {
     const user = (await jwt.verify(token, process.env.JWT_SECRET)) as User;
 
-    req.user = user;
+    req.user = user.email;
 
     next();
   } catch (e) {
