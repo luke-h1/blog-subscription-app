@@ -134,3 +134,4 @@ router.get('/me', checkAuth, async (req, res) => {
     },
   });
 });
+export default router;

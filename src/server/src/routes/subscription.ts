@@ -47,3 +47,4 @@ router.post(
     return res.status(201).json({ data: session, errors: null });
   },
 );
+export default router;

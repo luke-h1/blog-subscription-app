@@ -1,7 +1,11 @@
+/* eslint-disable no-console */
 import compression from 'compression';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
+import authRoutes from './routes/auth';
+import postRoutes from './routes/posts';
+import subscriptionRoutes from './routes/subscription';
 
 dotenv.config();
 
@@ -18,6 +22,10 @@ const main = async () => {
   );
 
   app.use(express.json());
+
+  app.use('/api/auth', authRoutes);
+  app.use('/api/subscriptions', subscriptionRoutes);
+  app.use('/api/posts', postRoutes);
 
   app.listen(process.env.PORT, () => {
     console.log(`Server started on port ${process.env.PORT}`);
