@@ -35,7 +35,7 @@ const PostPage = () => {
     if (data.errors) {
       setError(data.errors);
     } else {
-      setPosts(data);
+      setPosts(data.data);
     }
   };
 
@@ -46,7 +46,7 @@ const PostPage = () => {
   return (
     <Center py={6}>
       <Stack spacing={4}>
-        {posts.length > 0 ? (
+        {posts &&
           posts.map(post => (
             <Box
               maxW={'445px'}
@@ -83,18 +83,9 @@ const PostPage = () => {
                 <Text color={'gray.500'}>{post.content}</Text>
               </Stack>
             </Box>
-          ))
-        ) : (
-          <>
-            {' '}
-            <Text fontSize="3xl">
-              You have {error}, go get a subscription at:
-            </Text>
-            <ChakraLink as={Link} to="/posts/plans">
-              Post plans
-            </ChakraLink>
-          </>
-        )}
+          ))}
+        {error && error}
+        {!posts && <p>NO posts available</p>}
       </Stack>
     </Center>
   );

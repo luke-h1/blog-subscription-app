@@ -1,5 +1,4 @@
 import express from 'express';
-import { body, validationResult } from 'express-validator';
 import { checkAuth } from '../middleware/checkAuth';
 import { stripe } from '../utils/stripe';
 
@@ -7,44 +6,39 @@ const router = express.Router();
 
 router.get('/prices', checkAuth, async (_req, res) => {
   const prices = await stripe.prices.list({
-    apiKey: process.env.STRIPE_SK,
+    apiKey: process.env.STRIPE_SECRET,
   });
 
-  res.status(200).json({ data: prices, errors: null });
+  res.status(200).json({ data: prices, errors: [] });
 });
 
-router.post(
-  '/session',
-  body('priceId').exists(),
-  checkAuth,
-  async (req, res) => {
-    const validationErrors = validationResult(req);
+// needs validation to check priceId is not null
+router.post('/session', checkAuth, async (req, res) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      email: req.user,
+    },
+  });
 
-    if (!validationErrors.isEmpty()) {
-      const errors = validationErrors.array().map(error => {
-        return {
-          message: error.msg,
-        };
-      });
-      return res.status(422).json({ errors, data: null });
-    }
-
-    const { priceId } = req.body;
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+  const session = await stripe.checkout.sessions.create(
+    {
       mode: 'subscription',
+      payment_method_types: ['card'],
       line_items: [
         {
-          price: priceId,
+          price: req.body.priceId,
           quantity: 1,
         },
       ],
       success_url: `${process.env.CLIENT_URL}/posts`,
-      cancel_url: `${process.env.CLIENT_URL}/payment-error`,
-    });
+      cancel_url: `${process.env.CLIENT_URL}/posts/plans`,
+      customer: user?.stripeCustomerId,
+    },
+    {
+      apiKey: process.env.STRIPE_SECRET,
+    },
+  );
+  return res.status(201).json({ data: session, errors: [] });
+});
 
-    return res.status(201).json({ data: session, errors: null });
-  },
-);
 export default router;

@@ -73,7 +73,7 @@ router.get('/', checkAuth, async (req, res) => {
       email: req.user,
     },
   });
-
+  console.log(user?.stripeCustomerId);
   const subscriptions = await stripe.subscriptions.list(
     {
       customer: user?.stripeCustomerId,
@@ -84,6 +84,7 @@ router.get('/', checkAuth, async (req, res) => {
       apiKey: process.env.STRIPE_SK,
     },
   );
+  console.log('subscriptions', subscriptions);
 
   if (!subscriptions.data.length) {
     return res.status(200).json({ data: null, errors: 'no subscriptions' });
@@ -93,6 +94,7 @@ router.get('/', checkAuth, async (req, res) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const plan = subscriptions.data[0].plan.nickname;
+  console.log('plan', plan);
 
   switch (plan) {
     case 'Basic':
