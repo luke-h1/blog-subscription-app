@@ -38,6 +38,7 @@ export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
 
   const fetchUser = async () => {
     const data = await authService.me();
+    console.log(data);
 
     if (data.user) {
       setUser({
