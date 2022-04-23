@@ -1,7 +1,7 @@
 /* eslint-disable no-case-declarations */
 import dotenv from 'dotenv';
 import express from 'express';
-import { body, validationResult } from 'express-validator';
+import { param, validationResult } from 'express-validator';
 import { checkAdmin } from '../middleware/checkAdmin';
 import { checkAuth } from '../middleware/checkAuth';
 import { stripe } from '../utils/stripe';
@@ -125,76 +125,83 @@ router.get('/', checkAuth, async (req, res) => {
   }
 });
 
-router.get('/:id', body('id').exists(), checkAuth, async (req, res) => {
-  const validationErrors = validationResult(req);
+router.get(
+  '/:id',
+  param('id')
+    .exists({ checkNull: true, checkFalsy: true })
+    .withMessage('id is a required field'),
+  checkAuth,
+  async (req, res) => {
+    const validationErrors = validationResult(req);
 
-  if (!validationErrors.isEmpty()) {
-    const errors = validationErrors.array().map(error => {
-      return {
-        message: error.msg,
-      };
+    if (!validationErrors.isEmpty()) {
+      const errors = validationErrors.array().map(error => {
+        return {
+          message: error.msg,
+        };
+      });
+      return res.status(400).json({ errors, data: null });
+    }
+
+    const { id } = req.params;
+
+    const user = await prisma.user.findFirst({
+      where: {
+        email: req.user,
+      },
     });
-    return res.status(400).json({ errors, data: null });
-  }
+    const subscriptions = await stripe.subscriptions.list(
+      {
+        customer: user?.stripeCustomerId,
+        status: 'all',
+        expand: ['data.default_payment_method'],
+      },
+      {
+        apiKey: process.env.STRIPE_SK,
+      },
+    );
 
-  const { id } = req.body;
+    if (!subscriptions.data.length) {
+      return res.status(200).json({ data: null, errors: 'no subscriptions' });
+    }
 
-  const user = await prisma.user.findFirst({
-    where: {
-      email: req.user,
-    },
-  });
-  const subscriptions = await stripe.subscriptions.list(
-    {
-      customer: user?.stripeCustomerId,
-      status: 'all',
-      expand: ['data.default_payment_method'],
-    },
-    {
-      apiKey: process.env.STRIPE_SK,
-    },
-  );
+    // bad types from stripe
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const plan = subscriptions.data[0].plan.nickname;
 
-  if (!subscriptions.data.length) {
-    return res.status(200).json({ data: null, errors: 'no subscriptions' });
-  }
+    switch (plan) {
+      case 'Basic':
+        const basicPosts = await prisma.post.findFirst({
+          where: {
+            access: 'BASIC',
+            id,
+          },
+        });
+        return res.status(200).json({ data: basicPosts, errors: null });
 
-  // bad types from stripe
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const plan = subscriptions.data[0].plan.nickname;
+      case 'Standard':
+        const standardPosts = await prisma.post.findFirst({
+          where: {
+            access: 'STANDARD',
+            id,
+          },
+        });
+        return res.status(200).json({ data: standardPosts, errors: null });
 
-  switch (plan) {
-    case 'Basic':
-      const basicPosts = await prisma.post.findFirst({
-        where: {
-          access: 'BASIC',
-          id,
-        },
-      });
-      return res.status(200).json({ data: basicPosts, errors: null });
+      case 'Premium':
+        const premiumPosts = await prisma.post.findFirst({
+          where: {
+            access: 'PREMIUM',
+            id,
+          },
+        });
+        return res.status(200).json({ data: premiumPosts, errors: null });
 
-    case 'Standard':
-      const standardPosts = await prisma.post.findFirst({
-        where: {
-          access: 'STANDARD',
-          id,
-        },
-      });
-      return res.status(200).json({ data: standardPosts, errors: null });
-
-    case 'Premium':
-      const premiumPosts = await prisma.post.findFirst({
-        where: {
-          access: 'PREMIUM',
-          id,
-        },
-      });
-      return res.status(200).json({ data: premiumPosts, errors: null });
-
-    default:
-      return null;
-  }
-});
+      default:
+        return null;
+    }
+  },
+);
 
 export default router;
