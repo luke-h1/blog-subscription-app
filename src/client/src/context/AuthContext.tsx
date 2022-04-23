@@ -62,6 +62,11 @@ export const AuthContextProvider = ({ children }: Props) => {
         user: undefined,
         ready: true,
       });
+    } else {
+      setState({
+        user: undefined,
+        ready: true,
+      });
     }
   };
 
