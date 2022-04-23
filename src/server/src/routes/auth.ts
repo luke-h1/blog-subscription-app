@@ -134,6 +134,7 @@ router.get('/me', checkAuth, async (req, res) => {
       user: {
         id: user?.id,
         email: user?.email,
+        stripeCustomerId: user?.stripeCustomerId,
       },
     },
   });

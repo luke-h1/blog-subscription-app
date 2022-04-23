@@ -48,6 +48,15 @@ const authService = {
     );
     return data;
   },
+  me: async (): Promise<{
+    errors?: [{ message: string }];
+    user: { id: string; email: string; stripeCustomerId: string };
+  }> => {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/auth/me`,
+    );
+    return data;
+  },
 };
 
 export default authService;
