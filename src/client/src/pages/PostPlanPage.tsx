@@ -57,7 +57,7 @@ const PostPlanPage = () => {
 
   const createSession = async (priceId: string) => {
     const { data } = await subscriptionService.createSession(priceId);
-    window.location.href = data.data.url;
+    window.location.href = data.url;
   };
 
   useEffect(() => {
@@ -135,7 +135,11 @@ const PostPlanPage = () => {
                     </ListItem>
                   </List>
                   <Box w="80%" pt={7}>
-                    <Button w="full" colorScheme="red">
+                    <Button
+                      w="full"
+                      colorScheme="red"
+                      onClick={() => createSession(price.id)}
+                    >
                       Purchase
                     </Button>
                   </Box>
