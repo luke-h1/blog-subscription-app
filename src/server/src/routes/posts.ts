@@ -1,6 +1,7 @@
 /* eslint-disable no-case-declarations */
 import dotenv from 'dotenv';
 import express from 'express';
+import { checkAdmin } from '../middleware/checkAdmin';
 import { checkAuth } from '../middleware/checkAuth';
 import { stripe } from '../utils/stripe';
 
@@ -8,8 +9,8 @@ dotenv.config();
 
 const router = express.Router();
 
-// temp endpoint to seed DB with posts
-router.post('/', async (req, res) => {
+// admin endpoint to seed DB with posts
+router.post('/', checkAdmin, async (req, res) => {
   await prisma.post.create({
     data: {
       access: 'BASIC',

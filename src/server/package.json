@@ -15,7 +15,8 @@
     "gen-env": "gen-env-types .env -o src/types/env.d.ts -e .",
     "prisma:push": "prisma db push",
     "prisma:format": "prisma format",
-    "prisma:migrate": "prisma migrate deploy"
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate dev": "prisma migrate dev"
   },
   "dependencies": {
     "@prisma/client": "^3.12.0",

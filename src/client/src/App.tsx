@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import PostPage from './pages/PostPage';
 import PostPlanPage from './pages/PostPlanPage';
+import PostSlugPage from './pages/PostSlugPage';
 import Register from './pages/Register';
 
 const App = () => {
@@ -23,6 +24,10 @@ const App = () => {
           </Route>
           <Route path="/posts/plans" element={<ProtectedRoute />}>
             <Route path="/posts/plans" element={<PostPlanPage />} />
+          </Route>
+
+          <Route path="/posts/:id" element={<ProtectedRoute />}>
+            <Route path="/posts/:id" element={<PostSlugPage />} />
           </Route>
         </Routes>
       </AuthContextProvider>

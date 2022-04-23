@@ -12,6 +12,7 @@ model User {
   email            String @unique
   password         String
   stripeCustomerId String @unique @map("stripe_customer_id")
+  Role             Role   @default(USER)
 }
 
 model Post {
@@ -26,4 +27,9 @@ enum Access {
   BASIC
   STANDARD
   PREMIUM
+}
+
+enum Role {
+  ADMIN
+  USER
 }

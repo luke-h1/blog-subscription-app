@@ -48,41 +48,43 @@ const PostPage = () => {
       <Stack spacing={4}>
         {posts &&
           posts.map(post => (
-            <Box
-              maxW={'445px'}
-              w={'full'}
-              bg={'white'}
-              boxShadow={'2xl'}
-              rounded={'md'}
-              p={6}
-              overflow={'hidden'}
-            >
+            <Link to={`/posts/${post.id}`} key={post.id}>
               <Box
-                h={'210px'}
-                bg={'gray.100'}
-                mt={-6}
-                mx={-6}
-                mb={6}
-                pos={'relative'}
+                maxW={'445px'}
+                w={'full'}
+                bg={'white'}
+                boxShadow={'2xl'}
+                rounded={'md'}
+                p={6}
+                overflow={'hidden'}
               >
-                <img src={post.imageUrl} alt={post.title} />
-              </Box>
-              <Stack>
-                <Text
-                  color={'green.500'}
-                  textTransform={'uppercase'}
-                  fontWeight={800}
-                  fontSize={'sm'}
-                  letterSpacing={1.1}
+                <Box
+                  h={'210px'}
+                  bg={'gray.100'}
+                  mt={-6}
+                  mx={-6}
+                  mb={6}
+                  pos={'relative'}
                 >
-                  Blog
-                </Text>
-                <Heading color={'white'} fontSize={'2xl'} fontFamily={'body'}>
-                  {post.title}
-                </Heading>
-                <Text color={'gray.500'}>{post.content}</Text>
-              </Stack>
-            </Box>
+                  <img src={post.imageUrl} alt={post.title} />
+                </Box>
+                <Stack>
+                  <Text
+                    color={'green.500'}
+                    textTransform={'uppercase'}
+                    fontWeight={800}
+                    fontSize={'sm'}
+                    letterSpacing={1.1}
+                  >
+                    Blog
+                  </Text>
+                  <Heading color={'white'} fontSize={'2xl'} fontFamily={'body'}>
+                    {post.title}
+                  </Heading>
+                  <Text color={'gray.500'}>{post.content}</Text>
+                </Stack>
+              </Box>
+            </Link>
           ))}
         {error && error}
         {!posts && <p>NO posts available</p>}
