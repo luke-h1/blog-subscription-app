@@ -26,7 +26,7 @@ router.post(
           message: error.msg,
         };
       });
-      return res.status(422).json({ errors, data: null });
+      return res.status(400).json({ errors, data: null });
     }
 
     const { email, password } = req.body;

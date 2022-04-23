@@ -8,6 +8,15 @@ const postService = {
     );
     return data;
   },
+
+  getPost: async (
+    id: string,
+  ): Promise<{ data: Post } & { errors?: string }> => {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/posts/${id}`,
+    );
+    return data;
+  },
 };
 
 export default postService;

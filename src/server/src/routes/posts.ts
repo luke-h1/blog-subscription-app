@@ -1,6 +1,7 @@
 /* eslint-disable no-case-declarations */
 import dotenv from 'dotenv';
 import express from 'express';
+import { body, validationResult } from 'express-validator';
 import { checkAdmin } from '../middleware/checkAdmin';
 import { checkAuth } from '../middleware/checkAuth';
 import { stripe } from '../utils/stripe';
@@ -10,7 +11,7 @@ dotenv.config();
 const router = express.Router();
 
 // admin endpoint to seed DB with posts
-router.post('/', checkAdmin, async (req, res) => {
+router.post('/', checkAdmin, async (_req, res) => {
   await prisma.post.create({
     data: {
       access: 'BASIC',
@@ -74,7 +75,6 @@ router.get('/', checkAuth, async (req, res) => {
       email: req.user,
     },
   });
-  console.log(user?.stripeCustomerId);
   const subscriptions = await stripe.subscriptions.list(
     {
       customer: user?.stripeCustomerId,
@@ -85,7 +85,6 @@ router.get('/', checkAuth, async (req, res) => {
       apiKey: process.env.STRIPE_SK,
     },
   );
-  console.log('subscriptions', subscriptions);
 
   if (!subscriptions.data.length) {
     return res.status(200).json({ data: null, errors: 'no subscriptions' });
@@ -95,7 +94,6 @@ router.get('/', checkAuth, async (req, res) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const plan = subscriptions.data[0].plan.nickname;
-  console.log('plan', plan);
 
   switch (plan) {
     case 'Basic':
@@ -118,6 +116,78 @@ router.get('/', checkAuth, async (req, res) => {
       const premiumPosts = await prisma.post.findMany({
         where: {
           access: 'PREMIUM',
+        },
+      });
+      return res.status(200).json({ data: premiumPosts, errors: null });
+
+    default:
+      return null;
+  }
+});
+
+router.get('/:id', body('id').exists(), checkAuth, async (req, res) => {
+  const validationErrors = validationResult(req);
+
+  if (!validationErrors.isEmpty()) {
+    const errors = validationErrors.array().map(error => {
+      return {
+        message: error.msg,
+      };
+    });
+    return res.status(400).json({ errors, data: null });
+  }
+
+  const { id } = req.body;
+
+  const user = await prisma.user.findFirst({
+    where: {
+      email: req.user,
+    },
+  });
+  const subscriptions = await stripe.subscriptions.list(
+    {
+      customer: user?.stripeCustomerId,
+      status: 'all',
+      expand: ['data.default_payment_method'],
+    },
+    {
+      apiKey: process.env.STRIPE_SK,
+    },
+  );
+
+  if (!subscriptions.data.length) {
+    return res.status(200).json({ data: null, errors: 'no subscriptions' });
+  }
+
+  // bad types from stripe
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const plan = subscriptions.data[0].plan.nickname;
+
+  switch (plan) {
+    case 'Basic':
+      const basicPosts = await prisma.post.findFirst({
+        where: {
+          access: 'BASIC',
+          id,
+        },
+      });
+      return res.status(200).json({ data: basicPosts, errors: null });
+
+    case 'Standard':
+      const standardPosts = await prisma.post.findFirst({
+        where: {
+          access: 'STANDARD',
+          id,
+        },
+      });
+      return res.status(200).json({ data: standardPosts, errors: null });
+
+    case 'Premium':
+      const premiumPosts = await prisma.post.findFirst({
+        where: {
+          access: 'PREMIUM',
+          id,
         },
       });
       return res.status(200).json({ data: premiumPosts, errors: null });
