@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "clean": "rm -rf dist && docker-compose down && rm -rf .dbdata",
+    "watch": "tsc -w",
+    "dev": "cross-env NODE_ENV=development nodemon dist/index.js",
+    "start": "NODE_ENV=production node dist/index.js",
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx src --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
+    "tsc": "tsc --noEmit",
+    "gen-env": "gen-env-types .env -o src/types/env.d.ts -e ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
