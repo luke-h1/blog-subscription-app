@@ -8,10 +8,10 @@ import {
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
+import { useAuthContext, UserContext } from '../context/UserContext';
 
 const Nav = () => {
-  const [user, setUser] = useContext(UserContext);
+  const { user, setUser } = useAuthContext();
   const navigate = useNavigate();
 
   let body = null;

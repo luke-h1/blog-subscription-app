@@ -1,8 +1,8 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import authService from '../services/authService';
 
-interface User {
+interface AuthContextState {
   data?: {
     id: string;
     email: string;
@@ -12,19 +12,18 @@ interface User {
   loading: boolean;
 }
 
-export const UserContext = createContext<
-  [User, React.Dispatch<React.SetStateAction<User>>]
->([
-  {
-    data: undefined,
-    error: undefined,
-    loading: true,
-  },
-  () => {},
-]);
+export const UserContext = createContext<AuthContextState>({
+  loading: false,
+  data: undefined,
+  error: undefined,
+});
 
-export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
-  const [user, setUser] = useState<User>({
+export const UserContextProvider = ({
+  children,
+}: {
+  children?: React.ReactNode;
+}) => {
+  const [user, setUser] = useState<AuthContextState>({
     data: undefined,
     error: undefined,
     loading: false,
@@ -38,9 +37,8 @@ export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
 
   const fetchUser = async () => {
     const data = await authService.me();
-    console.log(data);
 
-    if (data.user) {
+    if (data && data.user) {
       setUser({
         data: {
           id: data.user.id,
@@ -73,9 +71,29 @@ export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const contextState: AuthContextState = useMemo(() => {
+    return {
+      data: {
+        email: user.data?.email as string,
+        id: user.data?.id as string,
+        stripeCustomerId: user.data?.stripeCustomerId as string,
+      },
+      error: user.error,
+      loading: user.loading,
+    };
+  }, [user]);
+
   return (
-    <UserContext.Provider value={[user, setUser]}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={contextState}>{children}</UserContext.Provider>
   );
 };
+
+export function useAuthContext(): AuthContextState {
+  const context = React.useContext(UserContext);
+
+  if (!context) {
+    throw new Error('useAuthContext must be used within a UserContextProvider');
+  }
+
+  return context;
+}

@@ -1,12 +1,13 @@
 import { Box, Flex, Button } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { InputField } from '../components/InputField';
 import { Wrapper } from '../components/Wrapper';
 import authService from '../services/authService';
 import axios from 'axios';
 
 const Login = () => {
+  const navigate = useNavigate();
   return (
     <Wrapper variant="small">
       <Formik
@@ -24,6 +25,7 @@ const Login = () => {
             axios.defaults.headers.common[
               'Authorization'
             ] = `Bearer ${res.data.token}`;
+            navigate('/posts');
           }
         }}
       >

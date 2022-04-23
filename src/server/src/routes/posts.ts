@@ -22,7 +22,7 @@ router.get('/', checkAuth, async (req, res) => {
       expand: ['data.default_payment_method'],
     },
     {
-      apiKey: process.env.STRIPE_PK,
+      apiKey: process.env.STRIPE_SK,
     },
   );
 

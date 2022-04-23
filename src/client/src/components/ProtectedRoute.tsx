@@ -4,20 +4,19 @@ import { Outlet, Navigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 
 const ProtectedRoute = () => {
-  const [user] = useContext(UserContext);
-
-  if (user.loading)
+  const { loading, data } = useContext(UserContext);
+  if (loading)
     return (
       <Suspense>
         <Spinner />
       </Suspense>
     );
 
-  if (!user.data && !user.loading) {
+  if (!data && !loading) {
     return <Navigate to="/" />;
   }
 
-  if (!user.loading && user.data) {
+  if (!loading && data) {
     return <Outlet />;
   }
   return null;
