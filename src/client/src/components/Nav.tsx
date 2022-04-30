@@ -12,7 +12,7 @@ import { useAuthContext } from '../context/AuthContext';
 
 const Nav = () => {
   const navigate = useNavigate();
-  const { loading, user, state, setState } = useAuthContext();
+  const { loading, user, setState } = useAuthContext();
 
   let body = null;
 
