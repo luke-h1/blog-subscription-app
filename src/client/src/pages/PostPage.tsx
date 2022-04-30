@@ -1,13 +1,6 @@
 import { useEffect, useState } from 'react';
 import postService from '../services/postService';
-import {
-  Box,
-  Center,
-  Heading,
-  Text,
-  Stack,
-  Link as ChakraLink,
-} from '@chakra-ui/react';
+import { Box, Center, Heading, Text, Stack } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 
 export enum Access {

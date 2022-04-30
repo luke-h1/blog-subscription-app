@@ -1,7 +1,7 @@
-import { Box, Flex, Button } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { InputField } from '../components/InputField';
 import { Wrapper } from '../components/Wrapper';
 import authService from '../services/authService';

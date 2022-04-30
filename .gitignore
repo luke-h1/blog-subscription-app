@@ -1,5 +1,9 @@
 node_modules
 .env
+.env.production
+!.env.example
 dist
 src/server/dist
 src/server/.dbdata
+srv/server/.env
+srv/server/.env.production

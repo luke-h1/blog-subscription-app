@@ -79,6 +79,7 @@ export const AuthContextProvider = ({ children }: Props) => {
         ready: true,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const contextState: AuthContextState = useMemo(() => {
