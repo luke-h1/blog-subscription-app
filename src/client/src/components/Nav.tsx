@@ -16,7 +16,7 @@ const Nav = () => {
 
   let body = null;
 
-  // data is loading
+  // user not logged in
   if (!loading && !user) {
     body = (
       <>
